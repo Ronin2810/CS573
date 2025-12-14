@@ -3,12 +3,12 @@ import numpy as np
 import pandas as pd
 
 # ==== EDIT THESE ONLY ====
-TICKER_A = "KO"
-TICKER_B = "PEP"
-START_DATE = "2001-01-01"
+TICKER_A = "GOOG"
+TICKER_B = "META"
+START_DATE = "2020-01-01"
 END_DATE   = "2025-11-01"   # yfinance end is exclusive
 ROLLING_WINDOW = 60         # trading days
-SAVE_SERIES_CSV = False
+SAVE_SERIES_CSV = True
 # =========================
 
 def fisher_z(series: pd.Series) -> pd.Series:
@@ -19,16 +19,25 @@ def fisher_inv(z: float) -> float:
     return np.tanh(z)
 
 def load_log_returns_yf(ticker: str, start: str, end: str, auto_adjust: bool = True) -> pd.Series:
-    try:
-        import yfinance as yf
-    except ImportError:
-        raise SystemExit("Please install yfinance: pip install yfinance")
-    df = yf.download(ticker, start=start, end=end, progress=False, auto_adjust=auto_adjust)
-    if df.empty:
-        raise ValueError(f"No price data for {ticker} in the given range.")
-    px = df["Close"].astype("float64")
-    r = np.log(px).diff()
-    r.name = ticker
+    # try:
+    #     import yfinance as yf
+    # except ImportError:
+    #     raise SystemExit("Please install yfinance: pip install yfinance")
+    # df = yf.download(ticker, start=start, end=end, progress=False, auto_adjust=auto_adjust)
+    # if df.empty:
+    #     raise ValueError(f"No price data for {ticker} in the given range.")
+    df = pd.read_csv(f"price_store/{ticker}.csv", parse_dates=["Date"])
+    if "Adj Close" in df.columns:
+        px = df["Adj Close"].astype("float64")
+    elif "AdjClose" in df.columns:
+        px = df["AdjClose"].astype("float64")
+    elif "Close" in df.columns:
+        px = df["Close"].astype("float64")
+    
+    r = np.log1p(px).diff().dropna()
+    # r = px.log().diff().dropna()
+    r = pd.Series(r.values, index=df["Date"].values[1:])
+    # r.name = ticker
     return r
 
 def compute_rolling_corr(ret_a: pd.Series, ret_b: pd.Series, window: int) -> pd.Series:

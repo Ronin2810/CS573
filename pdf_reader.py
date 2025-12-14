@@ -111,8 +111,23 @@ def iter_documents(root_dir: Path) -> Iterator[Document]:
 
         ticker = ticker_dir.name.upper()
 
-        for pdf_path in sorted(ticker_dir.glob("*.pdf")):
-            text, period = extract_text_from_pdf(pdf_path)
+        for pdf_path in sorted(ticker_dir.glob("*.pdf")) + sorted(ticker_dir.glob("*.txt")):
+            if pdf_path.suffix.lower() == ".pdf":
+                text, period = extract_text_from_pdf(pdf_path)
+            elif pdf_path.suffix.lower() == ".txt":
+                text = open(pdf_path, "r", encoding="utf-8").read()
+                period = None
+
+
+            if not period:
+                quarter = re.search(r'(Q[1-4])', pdf_path.name)
+                year = re.search(r'(\d{4})', pdf_path.name)
+                if quarter and year:
+                    period = f"{quarter.group(0)} {year.group(0)}"
+                else:
+                    period = "N/A"
+                
+            
             if not text.strip():
                 # Optionally skip empty PDFs
                 continue

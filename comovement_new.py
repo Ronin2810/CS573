@@ -20,8 +20,8 @@ CSV_IN   = "ko_pep_sim_by_period.csv"                 # input CSV with 2019Q3-st
 CSV_OUT  = "ko_pep_sim_by_period_with_corr.csv"       # output CSV path
 
 PRICE_DIR = "price_store"                              # folder containing KO.csv, PEP.csv
-FILE_A    = "KO.csv"                                   # first ticker file
-FILE_B    = "PEP.csv"                                  # second ticker file
+FILE_A    = "GOOG.csv"                                   # first ticker file
+FILE_B    = "META.csv"                                  # second ticker file
 
 ROLLING_WINDOW = 120                              # trading days (e.g., 60 ≈ ~3 months)
 

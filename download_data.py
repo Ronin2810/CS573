@@ -14,8 +14,9 @@ from pathlib import Path
 import pandas as pd
 
 # ======================= EDIT THESE ONLY =======================
-TICKERS      = ["KO", "PEP"]          # add more tickers here
-START_DATE   = "2001-01-01"
+# TICKERS      = ["KO", "PEP", "GOOG", "META"]          # add more tickers here
+TICKERS      = ["GOOG", "META"]          # add more tickers here
+START_DATE   = "2020-01-01"
 END_DATE     = "2025-11-01"           # yfinance 'end' is exclusive
 OUT_DIR      = "price_store"          # folder to save files
 OVERWRITE    = False                  # False = skip if already saved
@@ -110,7 +111,7 @@ def save_ticker(df: pd.DataFrame, ticker: str, out_dir: Path) -> None:
     df.to_csv(csv_path, index_label="Date", float_format="%.6f")
     # Save Parquet (fast to read later)
     pq_path = out_dir / f"{ticker}.parquet"
-    df.to_parquet(pq_path, engine="pyarrow")
+    df.to_parquet(pq_path, engine="fastparquet")
     print(f"Saved {ticker}: {csv_path} and {pq_path}")
 
 
