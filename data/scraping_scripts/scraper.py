@@ -78,7 +78,7 @@ def def_goog_transcripts(out_html="page_rendered.html", headless=False):
         links = []
         for a in soup.find_all("a", href=True):
             href = urljoin(url, a["href"])
-            if "Earnings-Call" in href and href.startswith(base):
+            if "earnings-call" in href.lower() and href.startswith(base):
                 links.append(href)
 
         links = sorted(set(links))
@@ -89,10 +89,16 @@ def def_goog_transcripts(out_html="page_rendered.html", headless=False):
             page.wait_for_load_state("networkidle", timeout=120_000)
             html = page.content()
             soup = BeautifulSoup(html, "html")
+            title = soup.find('h3').text
+            title = title.strip()
+            #Strip any invalid filename characters
+            
+            title = re.sub(f'\W', '_', title)
+            print(f'Title: {title}')
             transcript = soup.find('div', class_='evergreen-event-body')
             first_html = transcript.text
-            print(first_html)
-            filepath = r"CS57300/CS573/GOOG/" + link.split('/')[-1] + '.txt'
+            # print(first_html)
+            filepath = r"data/GOOG/" + title + '.txt'
             print("Writing to file...", filepath)
             open(filepath, 'w', encoding='utf-8').write(first_html)
 
@@ -251,7 +257,7 @@ def download_pepsi_transcripts():
 if __name__ == '__main__':
     # download_coca_cola_transcripts()
     # download_pepsi_transcripts()
-    # get_goog_links()
-    get_meta_links()
+    def_goog_transcripts()
+    # get_meta_links()
     # download_file('', parent_folder='data\\META')
     
