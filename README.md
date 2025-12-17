@@ -241,7 +241,3 @@ python main.py
   Check that `data/{TICKER}/` contains PDFs with extractable text and re-run `main.py`.
 
 ---
-
-## 📜 License
-
-MIT (or your preferred license)
